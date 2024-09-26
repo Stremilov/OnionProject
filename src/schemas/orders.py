@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class UpdateOrderStatusSchema(BaseModel):
     status: str
 
+
 class CreateOrderSchema(BaseModel):
     product_id: int
     quantity: int

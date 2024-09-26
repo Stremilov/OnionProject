@@ -1,10 +1,9 @@
 from datetime import datetime
 
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException
 from sqlalchemy import insert
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db.db import get_async_session, async_session_maker
+from src.db.db import async_session_maker
 from src.models.Order import OrderItem
 from src.utils.repository import AbstractRepository
 
@@ -12,7 +11,9 @@ from src.schemas.orders import CreateOrderSchema
 
 
 class OrderService:
-    def __init__(self, orders_repo: AbstractRepository, products_repo: AbstractRepository):
+    def __init__(
+        self, orders_repo: AbstractRepository, products_repo: AbstractRepository
+    ):
         self.orders_repo = orders_repo()
         self.products_repo = products_repo()
 
@@ -20,14 +21,14 @@ class OrderService:
         order_data = order.dict()
 
         async with async_session_maker() as session:
-            product = await self.products_repo.find_by_id(order_data['product_id'])
+            product = await self.products_repo.find_by_id(order_data["product_id"])
             if not product:
                 raise HTTPException(status_code=404, detail="Product not found")
 
-            if product.count < order_data['quantity']:
+            if product.count < order_data["quantity"]:
                 raise HTTPException(status_code=400, detail="Insufficient stock")
 
-            new_quantity = product.count - order_data['quantity']
+            new_quantity = product.count - order_data["quantity"]
             await self.products_repo.update_info(product.id, {"count": new_quantity})
 
             order_dict = {

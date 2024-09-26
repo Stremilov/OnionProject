@@ -8,16 +8,13 @@ from src.api.dependencies import product_service
 from src.schemas.products import CreateProductSchema
 from src.services.product import ProductService
 
-product_router = APIRouter(
-    prefix="/products",
-    tags=["Products"]
-)
+product_router = APIRouter(prefix="/products", tags=["Products"])
 
 
 @product_router.post("")
 async def create_product(
     product_data: CreateProductSchema,
-    product_service: Annotated[ProductService, Depends(product_service)]
+    product_service: Annotated[ProductService, Depends(product_service)],
 ):
     product_id = await product_service.add_product(product_data)
     return {"product_id": product_id}
@@ -33,8 +30,7 @@ async def get_products(
 
 @product_router.get("/{id}")
 async def get_products(
-    id: int,
-    product_service: Annotated[ProductService, Depends(product_service)]
+    id: int, product_service: Annotated[ProductService, Depends(product_service)]
 ):
     product_info = await product_service.get_product_info(id)
     return {"product_info": product_info}
@@ -50,4 +46,3 @@ async def update_product(id: int, product_data: dict):
 async def delete_product(id: int):
     result = await product_service().delete_item(id=id)
     return result
-

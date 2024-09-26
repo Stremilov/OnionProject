@@ -34,7 +34,6 @@ class AbstractRepository(ABC):
 class SQLAlchemyRepository(AbstractRepository):
     model = None
 
-
     async def add_one(self, data: dict) -> int:
         async with async_session_maker() as session:
             stmt = insert(self.model).values(**data).returning(self.model.id)
@@ -42,14 +41,12 @@ class SQLAlchemyRepository(AbstractRepository):
             await session.commit()
             return res.scalar_one()
 
-
     async def find_all(self):
         async with async_session_maker() as session:
             stmt = select(self.model)
             res = await session.execute(stmt)
             res = [row[0].to_read_model() for row in res.all()]
             return res
-
 
     async def find_by_id(self, id: int):
         async with async_session_maker() as session:
@@ -67,11 +64,7 @@ class SQLAlchemyRepository(AbstractRepository):
             if product is None:
                 raise HTTPException(status_code=404, detail="Product not found")
 
-            stmt = (
-                update(self.model)
-                .where(self.model.id == id)
-                .values(**new_data)
-            )
+            stmt = update(self.model).where(self.model.id == id).values(**new_data)
 
             await session.execute(stmt)
             await session.commit()

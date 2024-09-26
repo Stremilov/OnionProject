@@ -3,7 +3,7 @@ from src.utils.repository import AbstractRepository
 from src.schemas.products import CreateProductSchema
 
 
-class ProductService():
+class ProductService:
     def __init__(self, products_repo: AbstractRepository):
         self.products_repo: AbstractRepository = products_repo()
 

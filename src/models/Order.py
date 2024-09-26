@@ -41,6 +41,3 @@ class OrderItem(Base):
             "product_id": self.product_id,
             "quantity": self.quantity,
         }
-
-
-
